@@ -6,22 +6,33 @@ import (
 	"net/http"
 
 	"github.com/malakhovIlya/clinic-portal-go/internal/model"
+	"github.com/malakhovIlya/clinic-portal-go/internal/repository"
+	"gorm.io/gorm"
 )
 
-func SaveClientRequestHandler(w http.ResponseWriter, r *http.Request) {
+type ClientHandler struct {
+	repo *repository.ClientRepository
+}
+
+func NewClientHandler(db *gorm.DB) *ClientHandler {
+	return &ClientHandler{repo: repository.NewClientRepository(db)}
+}
+
+func (h *ClientHandler) SaveClientRequestHandler(w http.ResponseWriter, r *http.Request) {
 	var req model.RequestClient
 
-	// Парсим JSON
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		log.Printf("Ошибка парсинга JSON: %v", err)
 		http.Error(w, "Произошла ошибка!", 418)
 		return
 	}
 
-	log.Printf("Принята заявка от клиента: %+v", req)
+	if err := h.repo.Save(req); err != nil {
+		log.Printf("Ошибка сохранения в БД: %v", err)
+		http.Error(w, "Произошла ошибка!", 418)
+		return
+	}
 
-	// Пока без базы: просто эмулируем успешный ответ
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Заявка успешно создана!"))
 }

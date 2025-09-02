@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/malakhovIlya/clinic-portal-go/internal/config"
+	"github.com/malakhovIlya/clinic-portal-go/internal/model"
 	"log"
 	"net/http"
 
@@ -9,18 +11,17 @@ import (
 )
 
 func main() {
+	db := config.InitDB()
+	db.AutoMigrate(&model.RequestClient{})
+
+	handler := api.NewClientHandler(db)
+
 	router := chi.NewRouter()
+	router.Post("/api/client/request/save", handler.SaveClientRequestHandler)
 
-	// API
-	router.Post("/api/client/request/save", api.SaveClientRequestHandler)
-
-	// Static frontend
 	fs := http.FileServer(http.Dir("web/dist"))
 	router.Handle("/*", fs)
 
 	log.Println("Server started on :8080")
-	err := http.ListenAndServe(":8080", router)
-	if err != nil {
-		log.Fatal(err)
-	}
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
