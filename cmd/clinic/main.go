@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/malakhovIlya/clinic-portal-go/internal/config"
 	"github.com/malakhovIlya/clinic-portal-go/internal/model"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 	"github.com/malakhovIlya/clinic-portal-go/internal/api"
 )
 
@@ -23,6 +25,20 @@ func main() {
 	handler := api.NewClientHandler(db)
 
 	router := chi.NewRouter()
+
+	// Логирование запросов
+	router.Use(middleware.Logger)
+
+	// CORS
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:8080", "http://127.0.0.1:8080", "http://your-domain.com"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300, // кэш preflight
+	}))
+
 	router.Post("/api/client/request/save", handler.SaveClientRequestHandler)
 
 	fs := http.FileServer(http.Dir("web/dist"))
