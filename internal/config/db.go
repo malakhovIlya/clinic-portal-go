@@ -13,9 +13,9 @@ func InitDB() *gorm.DB {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		getEnv("DB_HOST", "localhost"),
-		getEnv("DB_USER", "postgres"),
-		getEnv("DB_PASSWORD", "postgres"),
-		getEnv("DB_NAME", "clinic"),
+		getEnv("DB_USER", "user"),
+		getEnv("DB_PASSWORD", "pass"),
+		getEnv("DB_NAME", "shortener"),
 		getEnv("DB_PORT", "5432"),
 	)
 
