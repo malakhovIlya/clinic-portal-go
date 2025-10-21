@@ -2,12 +2,11 @@ package api
 
 import (
 	"encoding/json"
-	"log"
-	"net/http"
-
 	"github.com/malakhovIlya/clinic-portal-go/internal/model"
 	"github.com/malakhovIlya/clinic-portal-go/internal/repository"
 	"gorm.io/gorm"
+	"log"
+	"net/http"
 )
 
 type ClientHandler struct {

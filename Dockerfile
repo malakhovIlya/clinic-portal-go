@@ -14,7 +14,6 @@ WORKDIR /app
 
 COPY --from=builder /app/server ./server
 COPY --from=builder /app/web/dist ./web/dist
-COPY --from=builder /app/web/public ./web/public
 
 RUN adduser -D appuser
 USER appuser
